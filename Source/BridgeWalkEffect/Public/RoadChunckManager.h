@@ -1,5 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// RoadChunckManager.h
 #pragma once
 
 #include "CoreMinimal.h"
@@ -17,16 +16,15 @@ public:
 
 	virtual void BeginPlay() override;
 
-	/** Component Geometry Collection à lire */
+	/** Geometry Collection Component to read */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Chunks")
 	UGeometryCollectionComponent* GCComp;
 
-	/** Transform final de chaque chunk dans le monde */
+	/** World transform of each chunk, index = bone index */
 	UPROPERTY(BlueprintReadOnly, Category="Chunks")
-	TArray<FTransform> WorldChunkTransforms;
+	TMap<int32, FTransform> WorldChunkTransformMap;
 
-	/** Fonction à appeler pour initialiser les transforms */
+	/** Initialize chunk transforms in world space */
 	UFUNCTION(BlueprintCallable, Category="Chunks")
 	void InitializeChunkTransforms();
-
 };

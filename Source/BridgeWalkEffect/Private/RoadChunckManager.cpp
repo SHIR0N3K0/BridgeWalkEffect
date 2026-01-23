@@ -1,19 +1,17 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
+// RoadChunckManager.cpp
 #include "RoadChunckManager.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 
 ARoadChunckManager::ARoadChunckManager()
 {
-	PrimaryActorTick.bCanEverTick = false; // Tick pas nécessaire pour l'instant
+	PrimaryActorTick.bCanEverTick = false; // We don't need tick for now
 }
 
 void ARoadChunckManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Tu peux appeler ici directement l'initialisation ou laisser BP l'appeler
+	// Call manually from BP or here
 	// InitializeChunkTransforms();
 }
 
@@ -21,24 +19,35 @@ void ARoadChunckManager::InitializeChunkTransforms()
 {
 	if (!GCComp)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GCComp non assigné !"));
+		UE_LOG(LogTemp, Warning, TEXT("GCComp not assigned!"));
 		return;
 	}
 
-	WorldChunkTransforms.Empty();
+	WorldChunkTransformMap.Empty();
 
-	// 1️⃣ Récupère les transforms locaux des chunks
+	// Get all local transforms
+	// NOTE: GetLocalRestTransforms(true) is real and returns TArray<FTransform>
 	TArray<FTransform> LocalTransforms = GCComp->GetLocalRestTransforms(true);
 
-	// 2️⃣ Transform du composant pour passer en monde
-	FTransform CompTM = GCComp->GetComponentTransform();
-
-	// 3️⃣ Conversion en espace monde
-	for (const FTransform& LocalT : LocalTransforms)
+	if (LocalTransforms.Num() == 0)
 	{
-		FTransform WorldT = LocalT * CompTM;
-		WorldChunkTransforms.Add(WorldT);
+		UE_LOG(LogTemp, Warning, TEXT("GCComp has no Level 1 bones!"));
+		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("Initialized %d chunk transforms"), WorldChunkTransforms.Num());
+	FTransform CompTransform = GCComp->GetComponentTransform();
+
+	// Loop through Level 1 bones (skip root at index 0)
+	for (int32 BoneIndex = 1; BoneIndex < LocalTransforms.Num(); ++BoneIndex)
+	{
+		// Local transform relative to parent/root
+		const FTransform& LocalT = LocalTransforms[BoneIndex];
+
+		// Multiply by component transform to get world transform
+		FTransform WorldT = LocalT * CompTransform;
+
+		WorldChunkTransformMap.Add(BoneIndex, WorldT);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Initialized %d chunk transforms"), WorldChunkTransformMap.Num());
 }
