@@ -1,6 +1,7 @@
-⚠️ Requirements
-Unreal Engine 5.6
-C++ project (this plugin is not compatible with Blueprint-only projects)
+⚠️ Requirements:
+- Unreal Engine 5.6
+- C++ project (this plugin is not compatible with Blueprint-only projects)
+________________________________________________________________________________________________________________________________________
 
 This project focuses on recreating — with a custom implementation — a dynamic traversal mechanic inspired by various games.
 
