@@ -1,6 +1,6 @@
 ⚠️ Requirements:
 - Unreal Engine 5.6
-- C++ project (this project when Fetshed )
+- C++ project (this project need to be built to work properly)
 ________________________________________________________________________________________________________________________________________
 
 This project focuses on recreating — with a custom implementation — a dynamic traversal mechanic inspired by various games.
